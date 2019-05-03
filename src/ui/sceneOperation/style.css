@@ -1,0 +1,147 @@
+.plane3D {
+    position: absolute;
+    top: 150px;
+    background-color: #444444;
+    opacity: 0.65;
+    font-size: 12px;
+    width: 185px;
+}
+
+.plane3D-header {
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.plane3D-camer-header {
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.plane3D-light-header {
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.radioBtn-detail {
+    margin-left: -39px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.normal-perspective {
+    float: left;
+    border: 1px solid #ccc;
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.normal-perspective-active {
+    background-color: #237ab9;
+    border: 1px solid #237ab9;
+    float: left;
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.normal-perspective-btn {
+    cursor: pointer;
+}
+
+.orthogonal-overlook {
+    border: 1px solid #ccc;
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.orthogonal-overlook-btn {
+    cursor: pointer;
+}
+
+.orthogonal-overlook-active {
+    background-color: #3795f9;
+    border: 1px solid #3795f9;
+    display: inline-block;
+    width: 60px;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.screenshot-btn {
+    float: right;
+    margin-top: -18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: #696969;
+    text-decoration: none;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    text-align: center;
+}
+
+.screenshot-btn:hover {
+    background-color: #3795f9;
+    border: 1px solid #3795f9;
+    float: right;
+    margin-top: -18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+}
+
+.overlook-scene-slider-hide {
+    display: none;
+}
+
+.planeDivider {
+    height: 1px;
+    background-color: white;
+}
+
+.light-Button {
+    height: 28px;
+}
+
+#first {
+    height: 27px;
+    display: inline-block;
+    float: left;
+    width: 91px;
+    text-align: center;
+    line-height: 27px;
+    letter-spacing: 1px;
+    color: #696969;
+}
+
+#second {
+    border: 1px solid;
+    height: 27px;
+    display: inline-block;
+    float: right;
+    margin-right: 0px;
+    width: 90px;
+    text-align: center;
+    line-height: 27px;
+    letter-spacing: 1px;
+    color: #696969;
+    border-left: 1px solid;
+}
+
+#first:hover {
+    color: white;
+    background-color: #3795f9;
+    cursor: pointer;
+}
+
+#second:hover {
+    color: white;
+    background-color: #3795f9;
+    cursor: pointer;
+}

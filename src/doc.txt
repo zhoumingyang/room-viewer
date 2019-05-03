@@ -1,0 +1,19 @@
+ViewerScene中的参数
+1. diffuseTextureCache：图片地址(url)和threejs texture map映射。无需每次加载清除。
+2. normalTextureCache: 图片地址(url)和threejs texture normalmap映射。无需每次加载清除。
+3. meshMapShowInfo：threejs mesh uuid和点击显示信息映射。需要每次加载清除。
+4. rmChildren：存储场景中需要删除的mesh对象。无需每次加载清除。
+5. intersected：场景中pick到的物品，用于显示选中的物品，始终存于normalScene中。无需每次加载清除。
+6. _currentIntersected：ray pick到的物品mesh，用于生成mesh的选中效果，以及删除。无需每次加载清除。
+7. rayCastObjects: ray pick候选mesh，当前场景的候选物体。需要每次加载清除。
+8. lights: 场景中的所有光源。无需每次加载清除。
+9. _mtlMeshMap：材质对象的uid与相应mesh的映射。合并同材质的mesh。需要每次加载清除。
+10. _urlOBJModelMap：obj模型地址(url)与模型场景信息映射。需要每次加载清除。
+11. _currentSceneNode：当前需要显示的场景。
+12. removeSceneNode: 记录上一个需要删除的场景。
+13. sceneNodes: 存储加载的所有场景。
+14. currentIndex: 当前显示场景的索引。
+15. rayCastObjectsArray: 存储场景的rayCastObjects。
+16. cacheSceneDatas: 一次加载所有的scene数据。无需每次加载清除。
+18. rayCastMapInstanceId: 存储选择物体与实例绘制之间的联系。需要每次加载清除。
+19. _rayCastMapInsMesh：存储选择物体与实例绘制mesh之间的联系。需要每次加载清除。

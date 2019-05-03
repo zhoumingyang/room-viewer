@@ -1,0 +1,29 @@
+.return-button-container {
+    position: absolute;
+    z-index: 21;
+    left: 6%;
+    top: 1px;
+}
+
+.returnbutton-plane {
+    letter-spacing: 5px;
+    background-color: #696969;
+    width: 90px;
+    text-align: center;
+    height: 25px;
+    border-radius: 2px;
+    opacity: 0.6;
+    z-index: 10;
+}
+
+.returnbutton {
+    display: inline-block;
+    width: 90px;
+    height: 25px;
+}
+
+.returnbutton-plane:hover {
+    cursor: pointer;
+    background-color: #3795f9;
+    opacity: 1;
+}

@@ -1,0 +1,23 @@
+.download-button-content {
+    position: absolute;
+    top: 23px;
+    left: 84px;
+    z-index: 10;
+}
+
+.download-button {
+    font-size: 17px;
+    color: #696969;
+    fill: #696969;
+    letter-spacing: 1px;
+}
+
+.download-button:hover {
+    background-color: #3795f9;
+    color: white;
+    border: 1px solid #3795f9;
+    border-radius: 2px;
+    fill: azure;
+    stroke: azure;
+    cursor: pointer
+}

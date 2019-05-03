@@ -1,0 +1,62 @@
+.selected-furniture-panel {
+    position: absolute;
+    right:0px;
+    width:400px;
+  
+}
+
+.selected-furniture-header {
+    color:white;
+    text-align: center;
+    background-color: #444444;
+    opacity: 0.65;
+    letter-spacing: 1px;
+}
+
+.selected-jid {
+    color:white;
+    background-color: #444444;
+    opacity: 0.65;
+    border:1px solid black;
+}
+
+.selected-jid .infoValue {
+    margin-left:5px;
+}
+
+.selected-name {
+    color:white;
+    background-color: #444444;
+    opacity: 0.65;
+    /* border:1px solid black; */
+}
+
+.selected-name .infoValue {
+    margin-left:18px;
+}
+
+.selected-type{
+    color:white;
+    background-color: #444444;
+    opacity: 0.65;
+    border:1px solid black;
+}
+
+.selected-type .infoValue {
+    margin-left:18px;
+}
+
+.selected-room {
+    color:white;
+    background-color: #444444;
+    opacity: 0.65;
+    /* border:1px solid black; */
+}
+
+.selected-room .infoValue {
+    margin-left:18px;
+}
+
+.titleName {
+    letter-spacing: 1px;
+}

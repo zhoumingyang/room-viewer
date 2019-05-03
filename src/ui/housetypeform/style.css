@@ -1,0 +1,28 @@
+.whole-house-show-panel {
+    position: absolute;
+    right: 0px;
+    top: 150px;
+    background-color: #444444;
+    opacity: 0.65;
+    width: 150px;
+    letter-spacing: 1px;
+    font-size:8px;
+}
+
+.housetype-head {
+    text-align: center
+}
+
+.furniturenumber-head {
+    text-align: center
+}
+
+.detail_value {
+    float: right;
+    margin-right: 1px;
+}
+
+.panel-divider {
+    height: 2px;
+    background-color: #050505;
+}

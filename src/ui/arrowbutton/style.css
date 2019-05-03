@@ -1,0 +1,64 @@
+.arrow-button-plane {
+    width: 200px;
+    top: 2%;
+    left: 40%;
+    position: absolute;
+}
+
+.arrow-button-left {
+    display: inline-block;
+    float: left;
+    transform: rotate(-90deg);
+    animation: arrowingleft 3s infinite;
+}
+
+.arrow-button-right {
+    display: inline-block;
+    float: right;
+    transform: rotate(90deg);
+    animation: arrowingright 3s infinite;
+}
+
+.arrow-button-left:hover {
+    display: inline-block;
+    float: left;
+    transform: rotate(-90deg);
+    animation: arrowingleft 3s infinite;
+    cursor: pointer;
+}
+
+.arrow-button-right:hover {
+    display: inline-block;
+    float: right;
+    transform: rotate(90deg);
+    animation: arrowingright 3s infinite;
+    cursor: pointer;
+}
+
+@keyframes arrowingleft {
+    0% {
+        transform: rotate(-90deg) translateY(-5px);
+        opacity: .8
+    }
+    50% {
+        transform: rotate(-90deg) translateY(10px);
+        opacity: .1
+    }
+    to {
+        transform: rotate(-90deg) translateY(-5px)
+    }
+}
+
+@keyframes arrowingright {
+    0% {
+        transform: rotate(90deg) translateY(-5px);
+        opacity: .8
+    }
+    50% {
+        transform: rotate(90deg) translateY(10px);
+        opacity: .1
+    }
+    to {
+        transform: rotate(90deg) translateY(-5px)
+    }
+}
