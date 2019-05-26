@@ -88,6 +88,9 @@ export class ViewerScene {
     }
 
     private _renderInitial(): void {
+        const localWindow: any = window;
+        const doc = document;
+        const docBd = doc.body;
         this.normalCamera = this._cameraInitial(200, 1650, 400);
         this.currentCamera = this.normalCamera;
         this.normalScene = new THREE.Scene();
@@ -95,30 +98,34 @@ export class ViewerScene {
         this.normalScene.add(this.singleRenderNode);
         this.normalScene.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), 0);
         this.normalRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
-        this.normalRenderer.setClearColor(new THREE.Color(0x000000));
-        this.normalRenderer.setPixelRatio(window.devicePixelRatio);
-        this.normalRenderer.setSize(window.innerWidth, window.innerHeight);
-        this.normalRenderer.domElement.setAttribute("id", "room-canvas");
-        document.body.appendChild(this.normalRenderer.domElement);
+        const tmpNormalRenderer = this.normalRenderer
+        tmpNormalRenderer.setClearColor(new THREE.Color(0x000000));
+        tmpNormalRenderer.setPixelRatio(localWindow.devicePixelRatio);
+        tmpNormalRenderer.setSize(localWindow.innerWidth, localWindow.innerHeight);
+        const domElement = tmpNormalRenderer.domElement;
+        domElement.setAttribute("id", "room-canvas");
+        docBd.appendChild(domElement);
         this._lightInitial(this.normalScene);
         this._controlInitial();
     }
 
     private _cameraInitial(camerx: number, camery: number, camerz: number): THREE.PerspectiveCamera {
-        const camera = new THREE.PerspectiveCamera(60.0, window.innerWidth / window.innerHeight, 1, 10000);
-        camera.up.x = 0;
-        camera.up.y = 1;
-        camera.up.z = 0;
-        camera.position.set(camerx, camery, camerz);
-
-        const aspect: number = window.innerWidth / window.innerHeight;
+        const localWindow: any = window;
+        const camera = new THREE.PerspectiveCamera(60.0, localWindow.innerWidth / localWindow.innerHeight, 1, 10000);
+        const cameraUp = camera.up;
+        const cameraPos = camera.position;
+        cameraUp.set(0, 1, 0);
+        cameraPos.set(camerx, camery, camerz);
+        const aspect: number = localWindow.innerWidth / localWindow.innerHeight;
         const frustumSize: number = 1350;
-        this.orthographicCamera = new THREE.OrthographicCamera(frustumSize * aspect / -2,
-            frustumSize * aspect / 2,
-            frustumSize / 2,
-            frustumSize / -2,
+        const halfFrustumSize = frustumSize / 2;
+        this.orthographicCamera = new THREE.OrthographicCamera(-halfFrustumSize * aspect,
+            halfFrustumSize * aspect,
+            halfFrustumSize,
+            -halfFrustumSize,
             1, 10000);
-        this.orthographicCamera.position.set(0, 2400, 0);
+        const orgCameraPos = this.orthographicCamera.position;
+        orgCameraPos.set(0, 2400, 0);
         this.orthographicCamera.lookAt(0, 0, 0);
         return camera;
     }
@@ -129,24 +136,28 @@ export class ViewerScene {
         this.rmChildren && this.rmChildren.push(this.ambientLight);
 
         this.hemiLight = new THREE.HemisphereLight(baseColor, baseColor, 0.30);
-        this.hemiLight.position.set(0, 4800, 0);
-        curScene.add(this.hemiLight);
-        this.rmChildren && this.rmChildren.push(this.hemiLight);
-        this.lights.push(this.hemiLight);
+        const tmpHemiLight = this.hemiLight;
+        const hemiLightPos = tmpHemiLight.position;
+        hemiLightPos.set(0, 4800, 0);
+        curScene.add(tmpHemiLight);
+        this.rmChildren && this.rmChildren.push(tmpHemiLight);
+        this.lights.push(tmpHemiLight);
 
         this.directionalLight = new THREE.DirectionalLight(0xdfebff, 0.37);
-        this.directionalLight.position.set(-1500, 2500, -1500);
-        const d: number = 4000;
-        curScene.add(this.directionalLight);
-        this.rmChildren && this.rmChildren.push(this.directionalLight);
-        this.lights.push(this.directionalLight);
+        const tmpDirLight = this.directionalLight;
+        const dirLightPos = tmpDirLight.position;
+        dirLightPos.set(-1500, 2500, -1500);
+        curScene.add(tmpDirLight);
+        this.rmChildren && this.rmChildren.push(tmpDirLight);
+        this.lights.push(tmpDirLight);
     }
 
     private _controlInitial(): void {
         this.normalControls = new OrbitControls(this.currentCamera, this.normalRenderer.domElement);
-        this.normalControls.addEventListener('change', this._render.bind(this));
-        this.normalControls.minDistance = 0;
-        this.normalControls.maxDistance = 5000;
+        const tmpControls = this.normalControls;
+        tmpControls.addEventListener('change', this._render.bind(this));
+        tmpControls.minDistance = 0;
+        tmpControls.maxDistance = 5000;
     }
 
     private _clearCacheData(): void {
@@ -188,6 +199,7 @@ export class ViewerScene {
     }
 
     public drawScene(datas: Array<any>): void {
+        const localWindow: any = window;
         if (this.removeSceneNode) {
             this.normalScene.remove(this.removeSceneNode);
         }
@@ -203,10 +215,12 @@ export class ViewerScene {
         this.rayCastObjects = this.rayCastObjectsArray[this.currentIndex];
         this.normalScene.add(this.currentSceneNode);
         this.removeSceneNode = this.currentSceneNode;
-        window.addEventListener('resize', function () {
+        localWindow.addEventListener('resize', function () {
             this._onWindowResize()
         }.bind(this), false);
-        this.normalRenderer.domElement.addEventListener('click', this._onDocumentNormalMouseClick.bind(this), false);
+        const tmpNormalRenderer = this.normalRenderer;
+        const domElement = tmpNormalRenderer.domElement;
+        domElement.addEventListener('click', this._onDocumentNormalMouseClick.bind(this), false);
         this._tick();
     }
 
@@ -226,16 +240,18 @@ export class ViewerScene {
     }
 
     private _onWindowResize(): void {
-        const tempWidth: number = window.innerWidth;
-        const tempHeight: number = window.innerHeight;
+        const localWindow = window;
+        const tempWidth: number = localWindow.innerWidth;
+        const tempHeight: number = localWindow.innerHeight;
         const aspect: number = tempWidth / tempHeight;
-        if (this.currentCamera instanceof THREE.PerspectiveCamera) {
-            this.currentCamera.aspect = aspect;
-        } else if (this.currentCamera instanceof THREE.OrthographicCamera) {
+        const currentCamera = this.currentCamera;
+        if (currentCamera instanceof THREE.PerspectiveCamera) {
+            currentCamera.aspect = aspect;
+        } else if (currentCamera instanceof THREE.OrthographicCamera) {
             const frustumSize: number = 1350;
             this.handler && this.handler.changeFrustum(frustumSize);
         }
-        this.currentCamera.updateProjectionMatrix();
+        currentCamera.updateProjectionMatrix();
         this.normalRenderer && this.normalRenderer.setSize(tempWidth, tempHeight);
         this._render();
     }
@@ -256,14 +272,19 @@ export class ViewerScene {
                         }
                         transArray.forEach((trans: any, index: number) => {
                             const cloneMesh = mesh.clone();
-                            cloneMesh.material = mtlArray[index];
-                            cloneMesh.position.set(Number(trans.pos[0] * 100), Number(trans.pos[1] * 100), Number(trans.pos[2] * 100));
-                            const quaternion: THREE.Quaternion = new THREE.Quaternion(Number(trans.rot[0]), Number(trans.rot[1]),
-                                Number(trans.rot[2]), Number(trans.rot[3]));
+                            let clmMaterial = cloneMesh.material;
+                            const clmPos = cloneMesh.position;
+                            clmMaterial = mtlArray[index];
+                            const posx = trans.pos[0], posy = trans.pos[1], posz = trans.pos[2];
+                            const rotx = trans.rot[0], roty = trans.rot[1], rotz = trans.rot[2], rotw = trans.rot[3];
+                            const sclx = trans.scale[0], scly = trans.scale[1], sclz = trans.scale[2];
+                            clmPos.set(Number(posx * 100), Number(posy * 100), Number(posz * 100));
+                            const quaternion: THREE.Quaternion = new THREE.Quaternion(Number(rotx), Number(roty), Number(rotz), Number(rotw));
                             cloneMesh.setRotationFromQuaternion(quaternion);
-                            cloneMesh.scale.set(Number(trans.scale[0]), Number(trans.scale[1]), Number(trans.scale[2]));
+                            cloneMesh.scale.set(Number(sclx), Number(scly), Number(sclz));
                             this.meshMapShowInfo && this.meshMapShowInfo.set(cloneMesh.uuid, showInfo);
-                            cloneMesh.geometry.computeBoundingBox();
+                            const cloneGeo = cloneMesh.geometry;
+                            cloneGeo.computeBoundingBox();
                             newObject3D.add(cloneMesh);
                         });
                     }
@@ -280,21 +301,29 @@ export class ViewerScene {
             return;
         }
         const s: string = 'default';
+        if (!transInfos.has(s)) {
+            return;
+        }
+        const transInfoValues = transInfos.get(s);
+        const materialValues = materials.get(s);
+        const curTransInfoValue = transInfoValues[0];
+        const curMaterialValue = materialValues[0];
+        const dpos = curTransInfoValue.pos;
+        const drot = curTransInfoValue.rot;
+        const dscl = curTransInfoValue.scale;
         let newObject3D: THREE.Object3D = new THREE.Object3D();
-        const quaternion: THREE.Quaternion = new THREE.Quaternion(
-            Number(transInfos.get(s)[0].rot[0]), Number(transInfos.get(s)[0].rot[1]),
-            Number(transInfos.get(s)[0].rot[2]), Number(transInfos.get(s)[0].rot[3]));
+        const quaternion: THREE.Quaternion = new THREE.Quaternion(Number(drot[0]), Number(drot[1]), Number(drot[2]), Number(drot[3]));
         let newGeometry = new THREE.BufferGeometry();
         newGeometry = Util.mergerObject3DMeshToBufferGeometry(object3D);
-        const tmpMaterial = materials.get(s)[0];
+        const tmpMaterial = curMaterialValue;
         tmpMaterial.defines = undefined;
         newGeometry.computeBoundingBox();
-        const newMesh = new THREE.Mesh(newGeometry, materials.get(s)[0]);
+        const newMesh = new THREE.Mesh(newGeometry, curMaterialValue);
         newObject3D.add(newMesh);
         this.meshMapShowInfo && this.meshMapShowInfo.set(newMesh.uuid, showInfo);
-        newObject3D.position.set(Number(transInfos.get(s)[0].pos[0] * 100), Number(transInfos.get(s)[0].pos[1] * 100), Number(transInfos.get(s)[0].pos[2] * 100));
+        newObject3D.position.set(Number(dpos * 100), Number(dpos * 100), Number(dpos * 100));
         newObject3D.setRotationFromQuaternion(quaternion);
-        newObject3D.scale.set(Number(transInfos.get(s)[0].scale[0]), Number(transInfos.get(s)[0].scale[1]), Number(transInfos.get(s)[0].scale[2]));
+        newObject3D.scale.set(Number(dscl), Number(dscl), Number(dscl));
         rayCastObjects.push(newObject3D);
         object3D = undefined;
         return newObject3D;
@@ -306,7 +335,8 @@ export class ViewerScene {
         if (!object3D) {
             return;
         }
-        let newObject3D: THREE.Object3D = (transInfos.has('default') || materials.has('default'))
+        const s: string = 'default';
+        let newObject3D: THREE.Object3D = (transInfos.has(s) || materials.has(s))
             ? this._dealNormalObject3d(object3D, transInfos, materials, rayCastOjbects, showInfo)
             : this._dealComponentObject3d(object3D, transInfos, materials, rayCastOjbects, showInfo);
         curScene && curScene.add(newObject3D);
@@ -379,9 +409,13 @@ export class ViewerScene {
         this.cahceAny = new Object();
         this.renderMode = RenderMode.AllRender;
 
-        this.normalRenderer.domElement && document.body.removeChild(this.normalRenderer.domElement);
-        this.normalRenderer.domElement && this.normalRenderer.domElement.removeEventListener('click', this._onDocumentNormalMouseClick.bind(this), false);
-        this.normalRenderer && this.normalRenderer.dispose();
+        const tmpNormalRenderer = this.normalRenderer;
+        const domElement = tmpNormalRenderer.domElement;
+        const doc = document;
+        const docBd = document.body;
+        domElement && docBd.removeChild(domElement);
+        domElement && domElement.removeEventListener('click', this._onDocumentNormalMouseClick.bind(this), false);
+        tmpNormalRenderer && tmpNormalRenderer.dispose();
         delete this.normalRenderer;
         delete this.normalScene;
         delete this.mtlLoader;
@@ -395,9 +429,10 @@ export class ViewerScene {
             this.normalControls.removeEventListener('change', this._render.bind(this));
             delete this.normalControls;
         }
-        window.cancelAnimationFrame(this._stop);
+        const localWindow = window;
+        localWindow.cancelAnimationFrame(this._stop);
         this._stop && delete this._stop;
-        window.removeEventListener('resize', function () {
+        localWindow.removeEventListener('resize', function () {
             this._onWindowResize();
         }.bind(this), false);
     }
@@ -561,6 +596,9 @@ export class ViewerScene {
             let index = 3 * i;
             let tmpIndex = 4 * i;
             const tmpTransInfo = value[i].transInfos.get(s)[0];
+            const tPos = tmpTransInfo.pos;
+            const tRot = tmpTransInfo.rot;
+            const tScl = tmpTransInfo.scale;
 
             instanceOffset[index] = tmpTransInfo.pos[0] * 100;
             instanceOffset[index + 1] = tmpTransInfo.pos[1] * 100;
@@ -576,11 +614,11 @@ export class ViewerScene {
             innstanceQuat[tmpIndex + 3] = tmpTransInfo.rot[3];
 
             rayCastMesh = new THREE.Mesh(tmpBuffer, curMtl);
-            rayCastMesh.position.set(tmpTransInfo.pos[0] * 100, tmpTransInfo.pos[1] * 100, tmpTransInfo.pos[2] * 100);
-            const quaternion: THREE.Quaternion = new THREE.Quaternion(Number(tmpTransInfo.rot[0]), Number(tmpTransInfo.rot[1]),
-                Number(tmpTransInfo.rot[2]), Number(tmpTransInfo.rot[3]));
+            rayCastMesh.position.set(tPos[0] * 100, tPos[1] * 100, tPos[2] * 100);
+            const quaternion: THREE.Quaternion = new THREE.Quaternion(Number(tRot[0]), Number(tRot[1]),
+                Number(tRot[2]), Number(tRot[3]));
             rayCastMesh.setRotationFromQuaternion(quaternion);
-            rayCastMesh.scale.set(Number(tmpTransInfo.scale[0]), Number(tmpTransInfo.scale[1]), Number(tmpTransInfo.scale[2]));
+            rayCastMesh.scale.set(Number(tScl[0]), Number(tScl[1]), Number(tScl[2]));
             rayCastMesh.updateMatrix();
             rayCastMesh.updateWorldMatrix(false, false);
             rayCastMesh.modelUrl = rootNode.modelUrl;
@@ -604,10 +642,12 @@ export class ViewerScene {
 
     private _createScene(data: any, curScene: THREE.Object3D, rayCastOjbects: any[]): void {
         const constant: ResUrl = Util.initConstants();
-        if (!data || !data.scene ||
-            !data.scene.room ||
-            !data.scene.room.length) {
-            window.cancelAnimationFrame(this._stop);
+        const localWindow = window;
+        const dataScene = data.scene;
+        const dataSceneRoom = dataScene.room;
+        const roomLength = dataSceneRoom.length;
+        if (!data || !dataScene || !dataSceneRoom || !roomLength) {
+            localWindow.cancelAnimationFrame(this._stop);
             return;
         }
         const furnitures = data.furniture || [];
@@ -618,18 +658,24 @@ export class ViewerScene {
             mtlKeyMap.set(mtl.uid, mtl);
         });
         const urlApiMap: Map<string, any> = new Map();
-        data.scene.room.forEach((ths: any) => {
-            ths.children.forEach((obj: any) => {
+        dataSceneRoom.forEach((ths: any) => {
+            const thsChildren = ths.children;
+            if (!thsChildren || !thsChildren.length) {
+                return;
+            }
+            thsChildren.forEach((obj: any) => {
                 const transInfo: TransInfo = Util.getModelTransInfo(obj);
-                if (obj.ref.includes('model')) {
+                const objRef = obj.ref;
+                const objComponents = obj.components;
+                if (objRef.includes('model')) {
                     const axisRotate: EulerRotateInfo = Util.getAxisRotateFromQuaternion(transInfo.rot);
-                    const furniture: any = Util.findObjectInArray(obj.ref, furnitures);
+                    const furniture: any = Util.findObjectInArray(objRef, furnitures);
                     if (!furniture) { return; }
                     const modelUrl: string = Util.getContentUrl(furniture.jid, constant.objName);
                     let transInfos: Map<string, Array<TransInfo>> = new Map();
                     let modelMaterials: Map<string, Array<THREE.MeshPhongMaterial>> = new Map();
                     let mtlJid;
-                    if (obj.components && obj.components.length) {
+                    if (objComponents && objComponents.length) {
                         this._dealComponentObject(obj, materials, transInfos, transInfo, modelMaterials);
                     } else {
                         let materialUrl: string;
@@ -653,11 +699,12 @@ export class ViewerScene {
                         this.urlOBJModelMap.set(modelUrl, [{ mtlJid, modelMaterials, transInfos }]);
                     urlApiMap.set(modelUrl, { api, axisRotate, transInfo, type: ths.type });
                 } else {
-                    const meshObj = Util.findObjectInArray(obj.ref, meshes);
-                    if (!meshObj || !meshObj.type
-                        || (meshObj.type && meshObj.type.includes('CustomizedCeiling'))
-                        || (meshObj.type && meshObj.type.includes('WallOuter'))
-                        || (meshObj.type && meshObj.type.includes('Ceiling'))) {
+                    const meshObj = Util.findObjectInArray(objRef, meshes);
+                    const meshObjType = meshObj.type;
+                    if (!meshObj || !meshObjType
+                        || (meshObjType && meshObjType.includes('CustomizedCeiling'))
+                        || (meshObjType && meshObjType.includes('WallOuter'))
+                        || (meshObjType && meshObjType.includes('Ceiling'))) {
                         return;
                     }
                     const materialObj = Util.findObjectInArray(meshObj.material, materials);
@@ -682,39 +729,47 @@ export class ViewerScene {
 
         this.urlOBJModelMap.forEach((value: Array<any>, key: string) => {
             const objLoader = new THREE.OBJLoader2();
-            objLoader.workerSupport.setTerminateRequested(true);
+            const workSupport = objLoader.workerSupport;
+            workSupport.setTerminateRequested(true);
             const currentInfo = urlApiMap.get(key);
             if (!currentInfo) {
                 return;
             }
+            const curAxisRotate = currentInfo.axisRotate;
+            const curTransInfo = currentInfo.transInfo;
+            const curType = currentInfo.type;
             fetch(currentInfo.api).then((res): any => {
                 return res.json()
             }).then((tmpJsonInfo: any): void => {
+                const tmpValue = value;
                 let jsonInfo: any = Object.assign({}, tmpJsonInfo);
-                jsonInfo.axisRotate = currentInfo.axisRotate;
-                jsonInfo.pos = currentInfo.transInfo.pos;
-                jsonInfo.room = currentInfo.type;
+                jsonInfo.axisRotate = curAxisRotate;
+                jsonInfo.pos = curTransInfo.pos;
+                jsonInfo.room = curType;
                 let showInfo: JsonDetail = Util.parseFpJSONInfo(jsonInfo);
                 objLoader.load(key, (obj: any) => {
                     let tmpObj = obj;
                     if (tmpObj.detail && tmpObj.detail.loaderRootNode) {
                         const rootNode: any = tmpObj.detail.loaderRootNode.clone();
                         rootNode.modelUrl = key;
-                        if (value[0].mtlJid) {
-                            this._furnitureInstanceDraw(rootNode, value, curScene, rayCastOjbects, showInfo);
+                        if (tmpValue[0].mtlJid) {
+                            this._furnitureInstanceDraw(rootNode, tmpValue, curScene, rayCastOjbects, showInfo);
                         } else {
-                            value.forEach((val) => {
+                            tmpValue.forEach((val) => {
                                 setRenderObject(rootNode, val, showInfo);
                             });
                         }
                     }
                 }, null, null, null, true);
             }).catch((e: any) => {
+                const tmpValue = value;
                 objLoader.load(key, (obj: any) => {
                     let tmpObj = obj;
-                    if (tmpObj.detail && tmpObj.detail.loaderRootNode) {
-                        const rootNode = tmpObj.detail.loaderRootNode.clone();
-                        value.forEach((val) => {
+                    const tmpDetail = tmpObj.detail;
+                    const loaderRootNode = tmpDetail.loaderRootNode;
+                    if (tmpDetail && loaderRootNode) {
+                        const rootNode = loaderRootNode.clone();
+                        tmpValue.forEach((val) => {
                             setRenderObject(rootNode, val, undefined);
                         });
                     }
